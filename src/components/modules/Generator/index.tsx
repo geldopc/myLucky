@@ -43,9 +43,28 @@ export function Generator({ history, draws }: GeneratorProps) {
   const lastDraw = draws.at(-1);
 
   const wheels = React.useMemo(() => buildWheels(sets, bands, previous, seed), [sets, bands, previous, seed]);
-  const backtest = React.useMemo(() => runBacktest(wheels, draws), [wheels, draws]);
   const currentSet = resolveActiveSet(wheels, activeSet);
   const currentWheel = wheels.find((wheel) => wheel.set === currentSet);
+  const multiple = wheels.length > 1;
+
+  const backtest = React.useMemo(
+    () => runBacktest(currentWheel ? [currentWheel] : [], draws),
+    [currentWheel, draws]
+  );
+  const totals = React.useMemo(
+    () => (wheels.length > 1 ? runBacktest(wheels, draws) : null),
+    [wheels, draws]
+  );
+
+  const step = React.useCallback(
+    (delta: number) => {
+      if (wheels.length === 0) return;
+      const index = wheels.findIndex((wheel) => wheel.set === currentSet);
+      const next = (index + delta + wheels.length) % wheels.length;
+      setActiveSet(wheels[next].set);
+    },
+    [wheels, currentSet]
+  );
 
   const draw = React.useCallback(() => {
     redraw();
@@ -162,12 +181,22 @@ export function Generator({ history, draws }: GeneratorProps) {
       >
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-            Quanto estes números já teriam pago
+            {multiple ? `Como a sorte ${currentSet} teria se saído` : "Quanto estes números já teriam pago"}
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Os {backtest.games} jogos conferidos contra todos os concursos da história, do nº {history.first}{" "}
-            ao nº {history.last}
+            Os {backtest.games} jogos desta sequência conferidos contra todos os concursos da história, do nº{" "}
+            {history.first} ao nº {history.last}
             {lastDraw ? ` (${formatDate(lastDraw.date)})` : ""}.
+            {totals ? (
+              <>
+                {" "}
+                Somando suas {wheels.length} sequências, são{" "}
+                <span className="text-foreground tabular-nums">
+                  {totals.prizeContests.toLocaleString("pt-BR")}
+                </span>{" "}
+                concursos premiados.
+              </>
+            ) : null}
           </p>
         </div>
         <Backtest result={backtest} loading={spinning} />
@@ -182,6 +211,8 @@ export function Generator({ history, draws }: GeneratorProps) {
         onDraw={draw}
         playedCount={playedCount(currentSet)}
         totalPlayed={totalPlayed}
+        onPrev={() => step(-1)}
+        onNext={() => step(1)}
       />
     </div>
   );

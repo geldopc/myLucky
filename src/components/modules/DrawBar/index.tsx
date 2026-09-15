@@ -1,5 +1,5 @@
 import { Button } from "@elements/Button";
-import { ArrowsClockwiseIcon } from "@phosphor-icons/react";
+import { ArrowsClockwiseIcon, CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { cn } from "@utils/css";
 import { formatMoney, GAMES_PER_SET } from "@utils/pricing";
 import type { Wheel } from "@utils/wheel";
@@ -13,6 +13,8 @@ type DrawBarProps = {
   onDraw: () => void;
   playedCount: number;
   totalPlayed: number;
+  onPrev: () => void;
+  onNext: () => void;
 };
 
 export function DrawBar({
@@ -24,8 +26,11 @@ export function DrawBar({
   onDraw,
   playedCount,
   totalPlayed,
+  onPrev,
+  onNext,
 }: DrawBarProps) {
   if (!wheel) return null;
+  const multiple = totalSets > 1;
 
   return (
     <div
@@ -37,29 +42,57 @@ export function DrawBar({
       )}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-5 py-3 sm:px-8">
-        <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-xs tracking-wide text-muted-foreground uppercase">
-            {totalSets > 1 ? `Sorte ${wheel.set} de ${totalSets}` : "Seus números da sorte"} ·{" "}
-            <span className="text-foreground tabular-nums">{formatMoney(cost)}</span>
-            {totalPlayed > 0 ? (
-              <>
-                {" · "}
-                <span className="text-foreground tabular-nums">
-                  {totalSets > 1 ? totalPlayed : playedCount}
-                </span>{" "}
-                {totalSets > 1 ? `de ${totalSets * GAMES_PER_SET} feitos` : `de ${GAMES_PER_SET} feitos`}
-              </>
-            ) : null}
-          </span>
-          <ul className="flex flex-wrap gap-1">
-            {wheel.pool.map((value) => (
-              <li key={value}>
-                <span className="inline-flex size-6 items-center justify-center rounded-full bg-foreground font-mono text-[11px] text-background tabular-nums">
-                  {String(value).padStart(2, "0")}
-                </span>
-              </li>
-            ))}
-          </ul>
+        <div className="flex min-w-0 items-center gap-3">
+          {multiple ? (
+            <Button
+              id="draw-bar-prev"
+              variant="outline"
+              size="icon"
+              aria-label="Sequência anterior"
+              onClick={onPrev}
+              disabled={spinning}
+              tabIndex={visible ? undefined : -1}
+            >
+              <CaretLeftIcon weight="bold" />
+            </Button>
+          ) : null}
+
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <span className="text-xs tracking-wide text-muted-foreground uppercase">
+              {multiple ? `Sorte ${wheel.set} de ${totalSets}` : "Seus números da sorte"} ·{" "}
+              <span className="text-foreground tabular-nums">{formatMoney(cost)}</span>
+              {totalPlayed > 0 ? (
+                <>
+                  {" · "}
+                  <span className="text-foreground tabular-nums">{multiple ? totalPlayed : playedCount}</span>{" "}
+                  {multiple ? `de ${totalSets * GAMES_PER_SET} feitos` : `de ${GAMES_PER_SET} feitos`}
+                </>
+              ) : null}
+            </span>
+            <ul className="flex flex-wrap gap-1">
+              {wheel.pool.map((value) => (
+                <li key={value}>
+                  <span className="inline-flex size-6 items-center justify-center rounded-full bg-foreground font-mono text-[11px] text-background tabular-nums">
+                    {String(value).padStart(2, "0")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {multiple ? (
+            <Button
+              id="draw-bar-next"
+              variant="outline"
+              size="icon"
+              aria-label="Próxima sequência"
+              onClick={onNext}
+              disabled={spinning}
+              tabIndex={visible ? undefined : -1}
+            >
+              <CaretRightIcon weight="bold" />
+            </Button>
+          ) : null}
         </div>
 
         <Button

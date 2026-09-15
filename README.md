@@ -47,6 +47,8 @@ margem da loteria e nenhum sistema a contorna.
   progresso na aba ("Sorte 2 · 8/11") e um aviso quando a sequência inteira estiver feita. A sequência
   gerada e as marcações ficam no `localStorage`, então recarregar a página não perde nada — feito para
   conferir no computador enquanto se aposta pelo celular.
+- **Navegação entre sequências** — a barra fixa tem setas para percorrer as sequências geradas; a aba
+  ativa, as estatísticas e a tabela de premiações acompanham a sequência selecionada.
 - **Todas as premiações em tabela** — o backtest lista todos os concursos que teriam pago (não uma
   amostra), numa data table com ordenação por concurso, data, pontuação ou prêmio e paginação. Clicar
   numa linha mostra as 15 dezenas sorteadas com os seus acertos.
