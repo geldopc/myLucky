@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/((?!api/.*).*)", "destination": "/index.html" }],
+  "headers": [
+    {
+      "source": "/data/history.json",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, s-maxage=3600, must-revalidate" }]
+    }
+  ]
+}

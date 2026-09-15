@@ -1,0 +1,39 @@
+name: Atualizar histórico da Lotofácil
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-history
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Buscar novos concursos na API da Caixa
+        run: node scripts/update-history.mjs
+
+      - name: Commitar se houve mudança
+        run: |
+          if git diff --quiet -- public/data/history.json; then
+            echo "Nenhum concurso novo."
+            exit 0
+          fi
+          LAST=$(node -p "require('./public/data/history.json').last")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/history.json
+          git commit -m "chore: histórico atualizado até o concurso $LAST"
+          git push
