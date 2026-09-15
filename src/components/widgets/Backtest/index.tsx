@@ -1,30 +1,43 @@
-import { Button } from "@elements/Button";
 import { Stat } from "@elements/Stat";
 import type { Backtest as BacktestModel } from "@utils/backtest";
+import { cn } from "@utils/css";
 import { FIXED_PRIZES, formatMoney } from "@utils/pricing";
-import { Hit } from "@widgets/Backtest/Hit";
-import * as React from "react";
+import { Prizes } from "@widgets/Prizes";
+import { Shuffling } from "@widgets/Shuffling";
 
 const TRACKED = [15, 14, 13, 12, 11];
 
-const INITIAL_ROWS = 8;
-const STEP = 50;
+function Placeholder({ wide = false }: { wide?: boolean }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span className="h-3 w-24 animate-pulse rounded-full bg-muted" />
+      <span className={cn("h-8 animate-pulse rounded-lg bg-muted", wide ? "w-28" : "w-16")} />
+      <span className="h-3 w-20 animate-pulse rounded-full bg-muted" />
+    </div>
+  );
+}
 
-export function Backtest({ result }: { result: BacktestModel }) {
-  const [visible, setVisible] = React.useState(INITIAL_ROWS);
-  const [lastResult, setLastResult] = React.useState(result);
-  if (lastResult !== result) {
-    setLastResult(result);
-    setVisible(INITIAL_ROWS);
-  }
-
-  const shown = result.best.slice(0, visible);
-  const remaining = result.best.length - shown.length;
+export function Backtest({ result, loading = false }: { result: BacktestModel; loading?: boolean }) {
   const rate = ((result.prizeContests / result.contests) * 100).toLocaleString("pt-BR", {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
   const awarded = TRACKED.reduce((acc, points) => acc + (result.distribution.get(points) ?? 0), 0);
+
+  if (loading) {
+    return (
+      <div id="backtest" className="flex flex-col gap-8">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
+          <Placeholder wide />
+          <Placeholder wide />
+          {TRACKED.map((points) => (
+            <Placeholder key={points} />
+          ))}
+        </div>
+        <Shuffling label="Conferindo em 3.779 concursos…" />
+      </div>
+    );
+  }
 
   return (
     <div id="backtest" className="flex flex-col gap-8">
@@ -58,34 +71,12 @@ export function Backtest({ result }: { result: BacktestModel }) {
         <h3 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
           Concursos que teriam premiado você
           <span className="ml-2 font-sans text-xs normal-case opacity-70">
-            passe o mouse ou toque para ver os acertos
+            clique numa linha para ver os acertos
           </span>
         </h3>
-        <ul className="flex flex-col">
-          {shown.map((hit) => (
-            <Hit key={hit.contest} hit={hit} />
-          ))}
-        </ul>
 
-        {remaining > 0 || visible > INITIAL_ROWS ? (
-          <div className="flex flex-wrap items-center gap-2">
-            {remaining > 0 ? (
-              <Button
-                id="show-more-best"
-                variant="outline"
-                size="sm"
-                onClick={() => setVisible((current) => current + STEP)}
-              >
-                Ver mais {Math.min(STEP, remaining)} de {remaining.toLocaleString("pt-BR")}
-              </Button>
-            ) : null}
-            {visible > INITIAL_ROWS ? (
-              <Button id="show-less-best" variant="ghost" size="sm" onClick={() => setVisible(INITIAL_ROWS)}>
-                Recolher
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
+        <Prizes hits={result.best} />
+
         <p className="text-xs text-muted-foreground">
           Os valores são os prêmios fixos da Caixa: {formatMoney(FIXED_PRIZES[11])} por 11 pontos,{" "}
           {formatMoney(FIXED_PRIZES[12])} por 12 e {formatMoney(FIXED_PRIZES[13])} por 13. Os de 14 e 15

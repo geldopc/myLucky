@@ -47,8 +47,9 @@ margem da loteria e nenhum sistema a contorna.
   progresso na aba ("Sorte 2 · 8/11") e um aviso quando a sequência inteira estiver feita. A sequência
   gerada e as marcações ficam no `localStorage`, então recarregar a página não perde nada — feito para
   conferir no computador enquanto se aposta pelo celular.
-- **Todas as premiações** — o backtest lista todos os concursos que teriam pago (não uma amostra),
-  começando por 8 e expandindo em lotes de 50.
+- **Todas as premiações em tabela** — o backtest lista todos os concursos que teriam pago (não uma
+  amostra), numa data table com ordenação por concurso, data, pontuação ou prêmio e paginação. Clicar
+  numa linha mostra as 15 dezenas sorteadas com os seus acertos.
 - **Borda elétrica no hover** — passar o mouse num jogo acende uma borda animada, para não se perder
   entre os 11. Só o card sob o cursor monta o canvas, então há no máximo uma animação por vez.
 - **Sorteio animado** — gerar é instantâneo, mas as 14 dezenas giram e travam uma a uma, ao lado de uma

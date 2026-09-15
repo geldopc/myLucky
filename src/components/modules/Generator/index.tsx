@@ -158,10 +158,7 @@ export function Generator({ history, draws }: GeneratorProps) {
       <section
         ref={backtestArea.ref}
         id="backtest-section"
-        className={cn(
-          "flex scroll-mt-24 flex-col gap-6 transition-opacity duration-500",
-          spinning && "opacity-25"
-        )}
+        className={cn("flex scroll-mt-24 flex-col gap-6 transition-opacity duration-500")}
       >
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
@@ -173,7 +170,7 @@ export function Generator({ history, draws }: GeneratorProps) {
             {lastDraw ? ` (${formatDate(lastDraw.date)})` : ""}.
           </p>
         </div>
-        <Backtest result={backtest} />
+        <Backtest result={backtest} loading={spinning} />
       </section>
 
       <DrawBar

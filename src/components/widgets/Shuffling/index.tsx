@@ -1,6 +1,6 @@
 import { Lottie } from "@elements/Lottie";
 
-export function Shuffling() {
+export function Shuffling({ label = "Montando seus jogos…" }: { label?: string }) {
   return (
     <div id="shuffling" className="flex flex-col items-center gap-3 py-6">
       <Lottie
@@ -8,9 +8,7 @@ export function Shuffling() {
         label="Sorteando seus números da sorte"
         className="size-40 opacity-90 invert dark:invert-0"
       />
-      <p className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-        Montando seus jogos…
-      </p>
+      <p className="font-heading text-sm tracking-wide text-muted-foreground uppercase">{label}</p>
     </div>
   );
 }
