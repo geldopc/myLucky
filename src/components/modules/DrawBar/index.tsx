@@ -1,7 +1,7 @@
 import { Button } from "@elements/Button";
 import { ArrowsClockwiseIcon } from "@phosphor-icons/react";
 import { cn } from "@utils/css";
-import { formatMoney } from "@utils/pricing";
+import { formatMoney, GAMES_PER_SET } from "@utils/pricing";
 import type { Wheel } from "@utils/wheel";
 
 type DrawBarProps = {
@@ -11,9 +11,20 @@ type DrawBarProps = {
   visible: boolean;
   spinning: boolean;
   onDraw: () => void;
+  playedCount: number;
+  totalPlayed: number;
 };
 
-export function DrawBar({ wheel, totalSets, cost, visible, spinning, onDraw }: DrawBarProps) {
+export function DrawBar({
+  wheel,
+  totalSets,
+  cost,
+  visible,
+  spinning,
+  onDraw,
+  playedCount,
+  totalPlayed,
+}: DrawBarProps) {
   if (!wheel) return null;
 
   return (
@@ -30,6 +41,15 @@ export function DrawBar({ wheel, totalSets, cost, visible, spinning, onDraw }: D
           <span className="text-xs tracking-wide text-muted-foreground uppercase">
             {totalSets > 1 ? `Sorte ${wheel.set} de ${totalSets}` : "Seus números da sorte"} ·{" "}
             <span className="text-foreground tabular-nums">{formatMoney(cost)}</span>
+            {totalPlayed > 0 ? (
+              <>
+                {" · "}
+                <span className="text-foreground tabular-nums">
+                  {totalSets > 1 ? totalPlayed : playedCount}
+                </span>{" "}
+                {totalSets > 1 ? `de ${totalSets * GAMES_PER_SET} feitos` : `de ${GAMES_PER_SET} feitos`}
+              </>
+            ) : null}
           </span>
           <ul className="flex flex-wrap gap-1">
             {wheel.pool.map((value) => (

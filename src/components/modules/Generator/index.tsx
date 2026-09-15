@@ -1,6 +1,7 @@
 import { Button } from "@elements/Button";
 import { Cost } from "@elements/Cost";
 import { Separator } from "@elements/Separator";
+import { useDraft } from "@hooks/Draft";
 import { useOnScreen } from "@hooks/OnScreen";
 import { revealDuration, usePrefersReducedMotion } from "@hooks/Reveal";
 import { DrawBar } from "@modules/DrawBar";
@@ -9,9 +10,9 @@ import { ArrowDownIcon, ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosph
 import { runBacktest } from "@utils/backtest";
 import { cn } from "@utils/css";
 import { type Draw, formatDate, type History, POOL_SIZE } from "@utils/history";
-import { costOf } from "@utils/pricing";
-import { randomSeed } from "@utils/random";
+import { costOf, GAMES_PER_SET } from "@utils/pricing";
 import { derivePoolBands } from "@utils/stats";
+import { playedKey } from "@utils/storage";
 import { buildWheels, resolveActiveSet } from "@utils/wheel";
 import { Backtest } from "@widgets/Backtest";
 import { Guarantee } from "@widgets/Guarantee";
@@ -30,8 +31,7 @@ type GeneratorProps = {
 };
 
 export function Generator({ history, draws }: GeneratorProps) {
-  const [seed, setSeed] = React.useState(() => randomSeed());
-  const [sets, setSets] = React.useState(1);
+  const { seed, sets, played, setSets, redraw, togglePlayed, clearSet } = useDraft(MIN_SETS, MAX_SETS);
   const [copied, setCopied] = React.useState(false);
   const [spinning, setSpinning] = React.useState(false);
   const reducedMotion = usePrefersReducedMotion();
@@ -48,10 +48,23 @@ export function Generator({ history, draws }: GeneratorProps) {
   const currentWheel = wheels.find((wheel) => wheel.set === currentSet);
 
   const draw = React.useCallback(() => {
-    setSeed(randomSeed());
+    redraw();
     if (reducedMotion) return;
     setSpinning(true);
-  }, [reducedMotion]);
+  }, [reducedMotion, redraw]);
+
+  const playedCount = React.useCallback(
+    (set: number) => {
+      let total = 0;
+      for (let index = 1; index <= GAMES_PER_SET; index++) {
+        if (played.has(playedKey(set, index))) total++;
+      }
+      return total;
+    },
+    [played]
+  );
+
+  const totalPlayed = wheels.reduce((acc, wheel) => acc + playedCount(wheel.set), 0);
 
   React.useEffect(() => {
     if (!spinning) return;
@@ -119,6 +132,10 @@ export function Generator({ history, draws }: GeneratorProps) {
         spinning={spinning}
         active={currentSet}
         onActiveChange={setActiveSet}
+        playedCount={playedCount}
+        isPlayed={(set, gameIndex) => played.has(playedKey(set, gameIndex))}
+        onToggle={(set, gameIndex) => togglePlayed(playedKey(set, gameIndex))}
+        onClear={clearSet}
       />
 
       <Separator />
@@ -166,6 +183,8 @@ export function Generator({ history, draws }: GeneratorProps) {
         visible={backtestArea.visible}
         spinning={spinning}
         onDraw={draw}
+        playedCount={playedCount(currentSet)}
+        totalPlayed={totalPlayed}
       />
     </div>
   );
