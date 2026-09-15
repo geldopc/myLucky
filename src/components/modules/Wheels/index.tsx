@@ -23,10 +23,10 @@ export function Wheels({ wheels, bands, previous }: WheelsProps) {
   return (
     <Tabs id="wheels" value={current} onValueChange={(value) => setActive(Number(value))} className="gap-6">
       <div className="-mx-1 overflow-x-auto px-1 pb-1">
-        <TabsList aria-label="Conjuntos gerados">
+        <TabsList aria-label="Suas sequências da sorte">
           {wheels.map((wheel) => (
             <TabsTrigger key={wheel.set} value={wheel.set} id={`wheel-tab-${wheel.set}`}>
-              Conjunto {wheel.set}
+              Sorte {wheel.set}
             </TabsTrigger>
           ))}
         </TabsList>

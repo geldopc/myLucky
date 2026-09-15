@@ -17,7 +17,7 @@ export function SetPicker({ value, min, max, onChange }: SetPickerProps) {
           id="set-decrease"
           variant="outline"
           size="icon"
-          aria-label="Menos um conjunto"
+          aria-label="Menos uma sequência da sorte"
           disabled={value <= min}
           onClick={() => onChange(Math.max(min, value - 1))}
         >
@@ -25,7 +25,7 @@ export function SetPicker({ value, min, max, onChange }: SetPickerProps) {
         </Button>
         <output
           id="set-value"
-          aria-label={`${value} conjuntos`}
+          aria-label={`${value} sequências da sorte`}
           className="font-heading w-10 text-center text-2xl tabular-nums"
         >
           {value}
@@ -34,7 +34,7 @@ export function SetPicker({ value, min, max, onChange }: SetPickerProps) {
           id="set-increase"
           variant="outline"
           size="icon"
-          aria-label="Mais um conjunto"
+          aria-label="Mais uma sequência da sorte"
           disabled={value >= max}
           onClick={() => onChange(Math.min(max, value + 1))}
         >
@@ -42,7 +42,8 @@ export function SetPicker({ value, min, max, onChange }: SetPickerProps) {
         </Button>
       </div>
       <span className="text-sm text-muted-foreground">
-        {value === 1 ? "conjunto" : "conjuntos"} · {value * GAMES_PER_SET} jogos
+        {value > 1 ? `${value} × ${GAMES_PER_SET} = ` : ""}
+        <span className="text-foreground">{value * GAMES_PER_SET} jogos</span> na mão
       </span>
     </div>
   );

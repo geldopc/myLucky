@@ -27,7 +27,7 @@ aprovação é idêntica — ganho de `1,00×`. Os sorteios reais *são* aleató
 estatístico de qualquer combinação.
 
 A aposta de 15 dezenas custa **R$ 3,50** ([tabela oficial da CAIXA][precos]), então cada conjunto de
-11 jogos custa **R$ 38,50** e devolve, em média, **R$ 16,36** por concurso — retorno de **−57%**. A
+11 jogos custa **R$ 38,50** e devolve, em média, **R$ 16,36** por concurso — retorno de **−57,5%**. A
 conta é exata: a distribuição de acertos no pool é hipergeométrica, com `P(k≥11) = 4,16%` e
 `P(k≥10) = 18,31%` (valores que batem com a frequência medida nos 3.779 concursos reais). Essa é a
 margem da loteria e nenhum sistema a contorna.

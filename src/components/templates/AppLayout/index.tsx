@@ -11,7 +11,7 @@ export function AppLayout() {
           <Outlet />
         </main>
         <footer className="mx-auto w-full max-w-6xl px-5 py-8 text-xs text-muted-foreground sm:px-8">
-          myLucky · gerador de desdobramentos para a Lotofácil · dados oficiais da Caixa
+          myLucky · seus números da sorte na Lotofácil · dados oficiais da Caixa
         </footer>
       </div>
     </TooltipProvider>

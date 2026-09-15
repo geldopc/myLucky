@@ -7,9 +7,9 @@ export function Guarantee({ poolHits }: { poolHits?: number }) {
       <table className="w-full min-w-md border-collapse text-sm">
         <thead>
           <tr className="border-b border-border text-left text-xs tracking-wide text-muted-foreground uppercase">
-            <th className="py-2 pr-4 font-normal">Acertos nas 14 fixas</th>
-            <th className="py-2 pr-4 font-normal">Garantido</th>
-            <th className="py-2 font-normal">Demais jogos</th>
+            <th className="py-2 pr-4 font-normal">Se você acertar</th>
+            <th className="py-2 pr-4 font-normal">Você leva garantido</th>
+            <th className="py-2 font-normal">E ainda</th>
           </tr>
         </thead>
         <tbody>
@@ -19,7 +19,10 @@ export function Guarantee({ poolHits }: { poolHits?: number }) {
               data-active={poolHits === row.poolHits}
               className="border-b border-border/50 last:border-0 data-[active=true]:bg-muted"
             >
-              <td className="py-2.5 pr-4 font-mono tabular-nums">{row.poolHits}</td>
+              <td className="py-2.5 pr-4">
+                <span className="font-mono tabular-nums">{row.poolHits}</span>
+                <span className="text-muted-foreground"> dos seus 14</span>
+              </td>
               <td className="py-2.5 pr-4">
                 <span className="font-heading">
                   {row.high.games} jogo{row.high.games === 1 ? "" : "s"} de {row.high.points} pontos

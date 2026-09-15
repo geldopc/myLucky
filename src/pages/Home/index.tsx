@@ -11,7 +11,7 @@ export function Home() {
   if (loading) {
     return (
       <p id="home-loading" className="text-sm text-muted-foreground">
-        Carregando o histórico da Lotofácil…
+        Preparando seus números da sorte…
       </p>
     );
   }
@@ -30,18 +30,19 @@ export function Home() {
     <div id="home" className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
         <h1 className="font-heading max-w-3xl text-4xl leading-tight tracking-tight text-balance sm:text-5xl">
-          11 jogos com cobertura garantida.
+          Seus números da sorte, com pontos garantidos.
         </h1>
         <p className="max-w-prose text-muted-foreground">
-          Geramos 14 dezenas com o perfil estatístico dos sorteios reais e as desdobramos nos 11 jogos que
-          cobrem todas as dezenas restantes. A garantia de pontos é matemática, não é sorte — e conferimos
-          tudo contra os {draws.length.toLocaleString("pt-BR")} concursos já realizados.
+          Escolhemos 14 números da sorte com a mesma cara dos sorteios que já saíram e os espalhamos em 11
+          jogos que cobrem todas as dezenas restantes. Aí está a melhor parte: acertando dentro dos seus 14, a
+          premiação já vem garantida pela matemática. E mostramos quanto estes números já teriam pago nos{" "}
+          {draws.length.toLocaleString("pt-BR")} concursos da história.
         </p>
 
         {lastDraw ? (
           <div id="last-draw" className="flex flex-col gap-3">
             <span className="text-xs tracking-wide text-muted-foreground uppercase">
-              Último concurso · nº {lastDraw.contest} · {formatDate(lastDraw.date)}
+              Último sorteio · nº {lastDraw.contest} · {formatDate(lastDraw.date)}
             </span>
             <ul className="flex flex-wrap gap-1.5">
               {lastDraw.numbers.map((value) => (

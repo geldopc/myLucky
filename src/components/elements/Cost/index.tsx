@@ -8,7 +8,7 @@ export function Cost({ sets }: { sets: number }) {
       className="flex flex-col gap-4 rounded-3xl bg-foreground px-6 py-5 text-background sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="flex flex-col gap-1">
-        <span className="text-xs tracking-wide uppercase opacity-60">Total a apostar</span>
+        <span className="text-xs tracking-wide uppercase opacity-60">Você vai investir</span>
         <span className="font-heading text-4xl tabular-nums sm:text-5xl">{formatMoney(costOf(sets))}</span>
       </div>
       <div className="flex flex-col gap-1 text-sm sm:items-end">
@@ -16,7 +16,7 @@ export function Cost({ sets }: { sets: number }) {
           {games} jogos × {formatMoney(TICKET_PRICE)}
         </span>
         <span className="opacity-60">
-          {sets} {sets === 1 ? "conjunto" : "conjuntos"} de {GAMES_PER_SET} jogos
+          {sets === 1 ? "sua sequência da sorte" : `suas ${sets} sequências da sorte`}
         </span>
       </div>
     </div>

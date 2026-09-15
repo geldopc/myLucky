@@ -51,11 +51,11 @@ export function Generator({ history, draws }: GeneratorProps) {
       <section className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-            Quantos conjuntos
+            Quantas sequências da sorte
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Cada conjunto são 14 dezenas fixas desdobradas em 11 jogos, com a garantia de cobertura própria.
-            Conjuntos diferentes nunca repetem um jogo entre si.
+            Cada sequência são 14 números da sorte espalhados em 11 jogos, com garantia própria de pontos.
+            Sequências diferentes nunca repetem um jogo entre si.
           </p>
         </div>
 
@@ -64,11 +64,11 @@ export function Generator({ history, draws }: GeneratorProps) {
           <div className="flex gap-2">
             <Button id="copy-games" variant="outline" onClick={copyGames}>
               {copied ? <CheckIcon weight="regular" /> : <CopyIcon weight="regular" />}
-              {copied ? "Copiado" : "Copiar jogos"}
+              {copied ? "Copiado" : "Copiar meus jogos"}
             </Button>
             <Button id="generate" onClick={() => setSeed(randomSeed())}>
               <ArrowsClockwiseIcon weight="regular" />
-              Gerar novamente
+              Tentar outros números
             </Button>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function Generator({ history, draws }: GeneratorProps) {
           className="inline-flex w-fit items-center gap-2 text-sm underline underline-offset-4 transition-opacity hover:opacity-70"
         >
           <ArrowDownIcon weight="regular" />
-          Ver como estes jogos teriam se saído
+          Ver quanto estes números já teriam pago
         </a>
       </section>
 
@@ -94,11 +94,11 @@ export function Generator({ history, draws }: GeneratorProps) {
       <section className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-            Garantia de cobertura
+            O que você já garante
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Não é probabilidade, é combinatória. Dado quantas das 15 sorteadas caírem nas 14 fixas de um
-            conjunto, os 11 jogos dele rendem exatamente isto:
+            Isto aqui não depende de sorte, é matemática. Dependendo de quantas das 15 sorteadas caírem nos
+            seus 14 números, os 11 jogos rendem exatamente isto:
           </p>
         </div>
         <Guarantee />
@@ -109,7 +109,7 @@ export function Generator({ history, draws }: GeneratorProps) {
       <section id="backtest-section" className="flex scroll-mt-24 flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-            Como estes jogos teriam se saído
+            Quanto estes números já teriam pago
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
             Os {backtest.games} jogos conferidos contra todos os concursos da história, do nº {history.first}{" "}

@@ -20,7 +20,7 @@ export function Wheel({ wheel, bands, previous, showLabel }: WheelProps) {
     <section id={`wheel-${wheel.set}`} className="flex flex-col gap-4">
       {showLabel ? (
         <h3 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-          Conjunto {wheel.set}
+          Sorte {wheel.set}
         </h3>
       ) : null}
 

@@ -31,7 +31,7 @@ export function Hit({ hit }: { hit: BacktestHit }) {
 
         <TooltipContent className="max-w-none flex-col items-start gap-2 p-3">
           <span className="text-xs opacity-70">
-            Concurso {hit.contest} · {formatDate(hit.date)} · conjunto {hit.bestSet}
+            Concurso {hit.contest} · {formatDate(hit.date)} · sorte {hit.bestSet}
           </span>
 
           <ul className="flex flex-wrap gap-1">
