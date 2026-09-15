@@ -69,6 +69,15 @@ npm run dev
 
 ## Histórico
 
-`public/data/history.json` guarda todos os concursos desde o nº 1 (29/09/2003). A atualização é
-automática: um cron diário na Vercel dispara `npm run history:update`, que consulta a API oficial da
-Caixa e adiciona apenas os concursos que faltam.
+`public/data/history.json` guarda todos os concursos desde o nº 1 (29/09/2003), e a atualização tem
+duas camadas:
+
+1. **Ao vivo, no navegador.** A API oficial da Caixa responde com CORS liberado, então o app consulta
+   o último concurso a cada carregamento. Se houver sorteio novo, ele é anexado na hora (até 12
+   concursos de atraso) e a página marca "atualizado agora". Se a API estiver fora, falha em silêncio
+   e o app segue com o JSON — a animação e o backtest não dependem disso.
+2. **Diária, no repositório.** Uma GitHub Action roda `npm run history:update` às 03:00 UTC, commita o
+   JSON e o push redeploya. Isso mantém o arquivo-base em dia, para que o passo 1 quase nunca precise
+   buscar mais de um concurso.
+
+Os sorteios saem por volta das 20h (BRT), de segunda a sábado.

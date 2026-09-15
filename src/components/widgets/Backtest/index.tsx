@@ -1,6 +1,6 @@
 import { Stat } from "@elements/Stat";
 import type { Backtest as BacktestModel } from "@utils/backtest";
-import { formatMoney } from "@utils/pricing";
+import { FIXED_PRIZES, formatMoney } from "@utils/pricing";
 import { Hit } from "@widgets/Backtest/Hit";
 
 const TRACKED = [15, 14, 13, 12, 11];
@@ -53,9 +53,11 @@ export function Backtest({ result }: { result: BacktestModel }) {
           ))}
         </ul>
         <p className="text-xs text-muted-foreground">
-          Só nos prêmios fixos de 11, 12 e 13 pontos, estes números já teriam pago{" "}
-          <span className="text-foreground tabular-nums">{formatMoney(result.fixedPrizeTotal)}</span> ao longo
-          da série.
+          Os valores são os prêmios fixos da Caixa: {formatMoney(FIXED_PRIZES[11])} por 11 pontos,{" "}
+          {formatMoney(FIXED_PRIZES[12])} por 12 e {formatMoney(FIXED_PRIZES[13])} por 13. Os de 14 e 15
+          pontos saem por rateio e variam a cada concurso, por isso aparecem à parte. Somando só os fixos,
+          estes números já teriam pago{" "}
+          <span className="text-foreground tabular-nums">{formatMoney(result.fixedPrizeTotal)}</span>.
         </p>
       </div>
     </div>

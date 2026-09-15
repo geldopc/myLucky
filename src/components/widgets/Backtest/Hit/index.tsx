@@ -8,6 +8,7 @@ import * as React from "react";
 export function Hit({ hit }: { hit: BacktestHit }) {
   const [open, setOpen] = React.useState(false);
   const matched = new Set(hit.bestGame.filter((value) => hit.drawn.includes(value)));
+  const rateio = hit.breakdown.filter((entry) => entry.points >= 14);
   const summary =
     hit.breakdown
       .filter((entry) => entry.points >= 11)
@@ -21,12 +22,20 @@ export function Hit({ hit }: { hit: BacktestHit }) {
           id={`hit-${hit.contest}`}
           aria-expanded={open}
           onClick={() => setOpen((current) => !current)}
-          className="flex w-full flex-wrap items-baseline justify-between gap-2 rounded-lg py-2.5 text-left text-sm transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="grid w-full grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-1 rounded-lg py-2.5 text-left text-sm transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:grid-cols-[auto_1fr_auto]"
         >
           <span className="font-mono text-muted-foreground tabular-nums">
             #{hit.contest} · {formatDate(hit.date)}
           </span>
-          <span className="font-heading">{summary}</span>
+          <span className="col-span-2 text-muted-foreground sm:col-span-1 sm:text-center">{summary}</span>
+          <span className="row-start-1 justify-self-end text-right sm:row-auto">
+            <span className="font-heading tabular-nums">{formatMoney(hit.prize)}</span>
+            {rateio.length > 0 ? (
+              <span className="block text-xs text-muted-foreground">
+                + {rateio.map((entry) => `${entry.games}× ${entry.points} pts`).join(" e ")}
+              </span>
+            ) : null}
+          </span>
         </TooltipTrigger>
 
         <TooltipContent className="max-w-none flex-col items-start gap-2 p-3">
@@ -51,7 +60,11 @@ export function Hit({ hit }: { hit: BacktestHit }) {
 
           <span className="text-xs">
             Seu melhor jogo acertou <strong>{matched.size} de 15</strong>
-            {hit.prize > 0 ? ` · ${formatMoney(hit.prize)} em prêmios fixos` : ""}
+            {rateio.length > 0
+              ? ` · ${formatMoney(hit.prize)} nos prêmios fixos, mais o rateio de ${rateio
+                  .map((entry) => `${entry.games}× ${entry.points} pts`)
+                  .join(" e ")}`
+              : ` · ${formatMoney(hit.prize)} em prêmios`}
           </span>
         </TooltipContent>
       </Tooltip>

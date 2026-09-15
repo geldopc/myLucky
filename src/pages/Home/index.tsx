@@ -1,3 +1,4 @@
+import { Badge } from "@elements/Badge";
 import { Ball } from "@elements/Ball";
 import { Separator } from "@elements/Separator";
 import { useHistory } from "@hooks/History";
@@ -6,7 +7,7 @@ import { Transparency } from "@modules/Transparency";
 import { formatDate } from "@utils/history";
 
 export function Home() {
-  const { history, draws, loading, error } = useHistory();
+  const { history, draws, loading, error, liveContests } = useHistory();
 
   if (loading) {
     return (
@@ -41,9 +42,17 @@ export function Home() {
 
         {lastDraw ? (
           <div id="last-draw" className="flex flex-col gap-3">
-            <span className="text-xs tracking-wide text-muted-foreground uppercase">
-              Último sorteio · nº {lastDraw.contest} · {formatDate(lastDraw.date)}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs tracking-wide text-muted-foreground uppercase">
+                Último sorteio · nº {lastDraw.contest} · {formatDate(lastDraw.date)}
+              </span>
+              {liveContests > 0 ? (
+                <Badge variant="outline" className="gap-1.5">
+                  <span className="size-1.5 rounded-full bg-foreground" />
+                  atualizado agora
+                </Badge>
+              ) : null}
+            </div>
             <ul className="flex flex-wrap gap-1.5">
               {lastDraw.numbers.map((value) => (
                 <li key={value}>
@@ -51,6 +60,11 @@ export function Home() {
                 </li>
               ))}
             </ul>
+            {history.nextDrawDate ? (
+              <span className="text-xs text-muted-foreground">
+                Próximo sorteio em {formatDate(history.nextDrawDate)} — dá tempo de escolher os seus.
+              </span>
+            ) : null}
           </div>
         ) : null}
       </section>
