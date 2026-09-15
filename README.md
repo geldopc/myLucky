@@ -1,5 +1,7 @@
 # myLucky
 
+**https://mylucky-lotofacil.vercel.app**
+
 Gerador de desdobramentos para a Lotofácil. Sorteia 14 dezenas com o perfil estatístico dos sorteios
 reais e as desdobra em 11 jogos que cobrem todas as dezenas restantes — o que torna a premiação
 **determinística** em função de quantas dezenas você acerta dentro das 14 fixas.
