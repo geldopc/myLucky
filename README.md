@@ -26,8 +26,21 @@ primos, moldura, repetidos) contra 200 mil combinações aleatórias em 8 nívei
 aprovação é idêntica — ganho de `1,00×`. Os sorteios reais *são* aleatórios, logo têm o mesmo perfil
 estatístico de qualquer combinação.
 
-Os 11 jogos custam R$ 38,50 e devolvem, em média, R$ 18,01 por concurso (−53%). Essa é a margem da
-loteria e nenhum sistema a contorna.
+A aposta de 15 dezenas custa **R$ 3,50** ([tabela oficial da CAIXA][precos]), então cada conjunto de
+11 jogos custa **R$ 38,50** e devolve, em média, **R$ 16,36** por concurso — retorno de **−57%**. A
+conta é exata: a distribuição de acertos no pool é hipergeométrica, com `P(k≥11) = 4,16%` e
+`P(k≥10) = 18,31%` (valores que batem com a frequência medida nos 3.779 concursos reais). Essa é a
+margem da loteria e nenhum sistema a contorna.
+
+[precos]: https://loterias.caixa.gov.br/paginas/lotofacil.aspx
+
+## Funcionalidades
+
+- **N conjuntos sem repetição** — escolha de 1 a 10 conjuntos (11 a 110 jogos); nenhum jogo se repete
+  entre conjuntos, garantido por teste automatizado.
+- **Custo em destaque** — total a apostar sempre visível, calculado sobre o preço real da aposta.
+- **Comparação com o sorteio** — passe o mouse ou toque em qualquer resultado do backtest para ver as
+  15 dezenas sorteadas com os seus acertos destacados.
 
 ## Stack
 

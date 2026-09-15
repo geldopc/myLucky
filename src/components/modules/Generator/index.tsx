@@ -1,21 +1,21 @@
-import { Badge } from "@elements/Badge";
-import { Ball } from "@elements/Ball";
 import { Button } from "@elements/Button";
+import { Cost } from "@elements/Cost";
 import { Separator } from "@elements/Separator";
-import { ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
+import { ArrowDownIcon, ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import { runBacktest } from "@utils/backtest";
-import { generatePool } from "@utils/generator";
 import { type Draw, formatDate, type History, POOL_SIZE } from "@utils/history";
 import { randomSeed } from "@utils/random";
-import { computeFeatures, derivePoolBands, FEATURE_LABELS, type FeatureKey } from "@utils/stats";
-import { buildWheel } from "@utils/wheel";
+import { derivePoolBands } from "@utils/stats";
+import { buildWheels } from "@utils/wheel";
 import { Backtest } from "@widgets/Backtest";
-import { GameList } from "@widgets/Game";
 import { Guarantee } from "@widgets/Guarantee";
+import { SetPicker } from "@widgets/SetPicker";
+import { Wheel } from "@widgets/Wheel";
 import * as React from "react";
 
 const COVERAGE = 0.97;
-const SHOWN_FEATURES: FeatureKey[] = ["even", "sum", "primes", "frame", "repeats"];
+const MIN_SETS = 1;
+const MAX_SETS = 10;
 
 type GeneratorProps = {
   history: History;
@@ -24,40 +24,43 @@ type GeneratorProps = {
 
 export function Generator({ history, draws }: GeneratorProps) {
   const [seed, setSeed] = React.useState(() => randomSeed());
+  const [sets, setSets] = React.useState(1);
   const [copied, setCopied] = React.useState(false);
 
   const bands = React.useMemo(() => derivePoolBands(history.draws, POOL_SIZE, COVERAGE), [history.draws]);
   const previous = history.draws.at(-1);
   const lastDraw = draws.at(-1);
 
-  const { pool } = React.useMemo(() => generatePool(bands, previous, seed), [bands, previous, seed]);
-  const wheel = React.useMemo(() => buildWheel(pool), [pool]);
-  const backtest = React.useMemo(() => runBacktest(wheel, draws), [wheel, draws]);
-  const features = React.useMemo(() => computeFeatures(pool, previous), [pool, previous]);
+  const wheels = React.useMemo(() => buildWheels(sets, bands, previous, seed), [sets, bands, previous, seed]);
+  const backtest = React.useMemo(() => runBacktest(wheels, draws), [wheels, draws]);
 
   const copyGames = React.useCallback(() => {
-    const text = wheel.games
-      .map((game) => game.numbers.map((n) => String(n).padStart(2, "0")).join(" "))
+    const text = wheels
+      .flatMap((wheel) =>
+        wheel.games.map((game) => game.numbers.map((n) => String(n).padStart(2, "0")).join(" "))
+      )
       .join("\n");
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     });
-  }, [wheel]);
+  }, [wheels]);
 
   return (
     <div id="generator" className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
-              As 14 dezenas fixas
-            </h2>
-            <p className="max-w-prose text-sm text-muted-foreground">
-              Sorteadas com o mesmo perfil estatístico dos {draws.length.toLocaleString("pt-BR")} concursos já
-              realizados, e desdobradas nos 11 jogos abaixo.
-            </p>
-          </div>
+        <div className="flex flex-col gap-2">
+          <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
+            Quantos conjuntos
+          </h2>
+          <p className="max-w-prose text-sm text-muted-foreground">
+            Cada conjunto são 14 dezenas fixas desdobradas em 11 jogos, com a garantia de cobertura própria.
+            Conjuntos diferentes nunca repetem um jogo entre si.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <SetPicker value={sets} min={MIN_SETS} max={MAX_SETS} onChange={setSets} />
           <div className="flex gap-2">
             <Button id="copy-games" variant="outline" onClick={copyGames}>
               {copied ? <CheckIcon weight="regular" /> : <CopyIcon weight="regular" />}
@@ -70,38 +73,31 @@ export function Generator({ history, draws }: GeneratorProps) {
           </div>
         </div>
 
-        <ul className="flex flex-wrap gap-2">
-          {wheel.pool.map((value) => (
-            <li key={value}>
-              <Ball value={value} tone="pool" />
-            </li>
-          ))}
-        </ul>
+        <Cost sets={wheels.length} />
 
-        <div className="flex flex-wrap items-center gap-2">
-          {SHOWN_FEATURES.map((key) => (
-            <Badge key={key} variant="outline" className="font-mono">
-              {FEATURE_LABELS[key]} {features[key]}
-              <span className="text-muted-foreground">
-                /{bands[key].min}–{bands[key].max}
-              </span>
-            </Badge>
-          ))}
-        </div>
+        <a
+          id="go-to-backtest"
+          href="#backtest-section"
+          className="inline-flex w-fit items-center gap-2 text-sm underline underline-offset-4 transition-opacity hover:opacity-70"
+        >
+          <ArrowDownIcon weight="regular" />
+          Ver como estes jogos teriam se saído
+        </a>
       </section>
 
       <Separator />
 
-      <section className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">Os 11 jogos</h2>
-          <p className="max-w-prose text-sm text-muted-foreground">
-            Cada jogo repete as 14 fixas e adiciona uma das 11 dezenas de fora — cobrindo todas elas. É isso
-            que torna a garantia abaixo determinística.
-          </p>
-        </div>
-        <GameList games={wheel.games} />
-      </section>
+      <div className="flex flex-col gap-10">
+        {wheels.map((wheel) => (
+          <Wheel
+            key={wheel.set}
+            wheel={wheel}
+            bands={bands}
+            previous={previous}
+            showLabel={wheels.length > 1}
+          />
+        ))}
+      </div>
 
       <Separator />
 
@@ -111,8 +107,8 @@ export function Generator({ history, draws }: GeneratorProps) {
             Garantia de cobertura
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Não é probabilidade, é combinatória. Dado quantas das 15 sorteadas caírem nas suas 14 fixas, o
-            resultado dos 11 jogos é exatamente este:
+            Não é probabilidade, é combinatória. Dado quantas das 15 sorteadas caírem nas 14 fixas de um
+            conjunto, os 11 jogos dele rendem exatamente isto:
           </p>
         </div>
         <Guarantee />
@@ -120,14 +116,14 @@ export function Generator({ history, draws }: GeneratorProps) {
 
       <Separator />
 
-      <section className="flex flex-col gap-6">
+      <section id="backtest-section" className="flex scroll-mt-24 flex-col gap-6">
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
             Como estes jogos teriam se saído
           </h2>
           <p className="max-w-prose text-sm text-muted-foreground">
-            Estes 11 jogos conferidos contra todos os concursos da história, do nº {history.first} ao nº{" "}
-            {history.last}
+            Os {backtest.games} jogos conferidos contra todos os concursos da história, do nº {history.first}{" "}
+            ao nº {history.last}
             {lastDraw ? ` (${formatDate(lastDraw.date)})` : ""}.
           </p>
         </div>
