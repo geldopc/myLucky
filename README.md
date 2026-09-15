@@ -1,68 +1,102 @@
 # myLucky
 
-**https://mylucky-lotofacil.vercel.app**
+Gerador de desdobramentos para a Lotofácil. Sorteia 14 dezenas e as espalha em 11 jogos que cobrem
+todas as dezenas restantes — o que torna a premiação **determinística** em função de quantas dezenas
+você acerta dentro das 14.
 
-Gerador de desdobramentos para a Lotofácil. Sorteia 14 dezenas com o perfil estatístico dos sorteios
-reais e as desdobra em 11 jogos que cobrem todas as dezenas restantes — o que torna a premiação
-**determinística** em função de quantas dezenas você acerta dentro das 14 fixas.
+**Live →** [mylucky-lotofacil.vercel.app](https://mylucky-lotofacil.vercel.app)
+
+![Home](docs/assets/screenshot-home.png)
+
+---
+
+## O que faz
+
+- **Desdobra 14 dezenas em 11 jogos** com garantia de pontos que não depende de sorte
+- **Confere contra todos os 3.779 concursos** já realizados, do nº 1 (29/09/2003) em diante
+- **Mostra quanto teriam pago**, usando os prêmios fixos oficiais da Caixa
+- **Marca o que você já apostou**, para conferir no computador enquanto joga pelo celular
+- **Atualiza o histórico sozinho**, direto da API da Caixa
+
+![Concursos premiados](docs/assets/screenshot-backtest.png)
+
+---
 
 ## A garantia
 
-| Acertos nas 14 fixas | Garantido | Demais jogos |
+Não é probabilidade, é combinatória. Cada um dos 11 jogos repete as 14 dezenas fixas e adiciona uma
+das 11 dezenas de fora, cobrindo todas elas. O resultado é fechado:
+
+| Acertos nas 14 fixas | Garantido | E ainda |
 | --- | --- | --- |
-| 14 | 1 jogo de 15 pontos | 10 de 14 pontos |
+| 14 | 1 jogo de **15 pontos** | 10 de 14 pontos |
 | 13 | 2 jogos de 14 pontos | 9 de 13 pontos |
 | 12 | 3 jogos de 13 pontos | 8 de 12 pontos |
-| 11 | 4 jogos de 12 pontos | 7 de 11 pontos |
+| 11 | 4 jogos de **12 pontos** | 7 de 11 pontos |
 | 10 | 5 jogos de 11 pontos | 6 de 10 pontos |
 
-Isso é combinatória, não probabilidade: cada um dos 11 jogos repete as 14 fixas e adiciona uma das 11
-dezenas de fora, cobrindo todas elas.
+Isso é verificado por teste automatizado: 40 conjuntos × 3.779 sorteios = **151.160 comparações**
+entre a tabela teórica e a contagem real, jogo a jogo.
+
+---
 
 ## Honestidade estatística
 
-Filtros estatísticos **não** aumentam a chance de acerto. Testamos as faixas históricas (pares, soma,
-primos, moldura, repetidos) contra 200 mil combinações aleatórias em 8 níveis de aperto: a taxa de
-aprovação é idêntica — ganho de `1,00×`. Os sorteios reais *são* aleatórios, logo têm o mesmo perfil
-estatístico de qualquer combinação.
+Filtros estatísticos **não** aumentam a chance de acerto. As faixas históricas (pares, soma, primos,
+moldura, repetidos) foram testadas contra 200 mil combinações aleatórias em 8 níveis de aperto:
 
-A aposta de 15 dezenas custa **R$ 3,50** ([tabela oficial da CAIXA][precos]), então cada conjunto de
-11 jogos custa **R$ 38,50** e devolve, em média, **R$ 16,36** por concurso — retorno de **−57,5%**. A
-conta é exata: a distribuição de acertos no pool é hipergeométrica, com `P(k≥11) = 4,16%` e
-`P(k≥10) = 18,31%` (valores que batem com a frequência medida nos 3.779 concursos reais). Essa é a
-margem da loteria e nenhum sistema a contorna.
+| Aperto | Sorteios reais aprovados | Aleatórias aprovadas | Ganho |
+| --- | --- | --- | --- |
+| 99% | 96,2% | 96,0% | **1,00×** |
+| 95% | 74,9% | 74,2% | **1,01×** |
+| 80% | 35,9% | 35,9% | **1,00×** |
+| 60% | 5,4% | 5,1% | **1,06×** |
+
+O motivo é estrutural: a Lotofácil é um sorteio uniforme, então os resultados reais têm exatamente o
+mesmo perfil estatístico de qualquer combinação. Os filtros servem para dar aos números gerados o
+perfil dos sorteios que de fato aconteceram — não para prever o próximo.
+
+A aposta de 15 dezenas custa **R$ 3,50** ([tabela oficial][precos]), então cada sequência de 11 jogos
+custa **R$ 38,50** e devolve, em média, **R$ 16,36** por concurso — retorno de **−57,5%**. A conta é
+exata: a distribuição de acertos é hipergeométrica, com `P(k≥11) = 4,16%` e `P(k≥10) = 18,31%`,
+valores que batem com a frequência medida nos 3.779 concursos reais. Essa é a margem da loteria e
+nenhum sistema a contorna.
 
 [precos]: https://loterias.caixa.gov.br/paginas/lotofacil.aspx
 
-## Funcionalidades
-
-- **N conjuntos sem repetição** — escolha de 1 a 10 conjuntos (11 a 110 jogos); nenhum jogo se repete
-  entre conjuntos, garantido por teste automatizado.
-- **Conjuntos em abas** — com mais de um conjunto os jogos vão para abas, então apenas 11 jogos ficam
-  montados no DOM por vez em vez de até 110.
-- **Custo em destaque** — total a apostar sempre visível, calculado sobre o preço real da aposta.
-- **Comparação com o sorteio** — passe o mouse ou toque em qualquer resultado do backtest para ver as
-  15 dezenas sorteadas com os seus acertos destacados.
-- **Marcar o que já apostou** — cada jogo é um botão: clique ao apostar e ele fica marcado, com o
-  progresso na aba ("Sorte 2 · 8/11") e um aviso quando a sequência inteira estiver feita. A sequência
-  gerada e as marcações ficam no `localStorage`, então recarregar a página não perde nada — feito para
-  conferir no computador enquanto se aposta pelo celular.
-- **Navegação entre sequências** — a barra fixa tem setas para percorrer as sequências geradas; a aba
-  ativa, as estatísticas e a tabela de premiações acompanham a sequência selecionada.
-- **Todas as premiações em tabela** — o backtest lista todos os concursos que teriam pago (não uma
-  amostra), numa data table com ordenação por concurso, data, pontuação ou prêmio e paginação. Clicar
-  numa linha mostra as 15 dezenas sorteadas com os seus acertos.
-- **Borda elétrica no hover** — passar o mouse num jogo acende uma borda animada, para não se perder
-  entre os 11. Só o card sob o cursor monta o canvas, então há no máximo uma animação por vez.
-- **Sorteio animado** — gerar é instantâneo, mas as 14 dezenas giram e travam uma a uma, ao lado de uma
-  animação Lottie. O player entra por `import()` dinâmico, então vira um chunk separado (47 KB gzip) que
-  só é baixado no primeiro sorteio; o bundle inicial não muda. Respeita `prefers-reduced-motion`.
+---
 
 ## Stack
 
-Vite · React 19 · TypeScript · Tailwind CSS 4 · shadcn/ui (Base UI) · React Router · Biome · Vitest
+| Camada | Escolha |
+| --- | --- |
+| Build | Vite 8 + TypeScript 6 |
+| UI | React 19 + Tailwind v4 + shadcn/ui (zinc, base-ui) |
+| Tabela | TanStack Table v8 |
+| Rotas | React Router v7 |
+| Animação | Lottie (chunk sob demanda) + canvas |
+| Fontes | Oxanium (títulos) + Raleway (texto) |
+| Lint/Format | Biome |
+| Testes | Vitest |
+| Deploy | Vercel + GitHub Actions |
 
-## Desenvolvimento
+---
+
+## Arquitetura
+
+- **Núcleo matemático puro** — `src/utils/` não conhece React: `stats` deriva as faixas do histórico,
+  `generator` sorteia o pool, `wheel` monta o desdobramento e `backtest` confere contra a série
+- **Atomic design** — `elements` → `widgets` → `modules` → `templates` → `pages`, um diretório por
+  componente com `index.tsx`
+- **Faixas derivadas dos dados** — as bandas de cada métrica saem de todos os subconjuntos de 14 dos
+  sorteios vencedores (56.685 amostras), não de constantes escolhidas à mão
+- **Estado em `localStorage`** — a sequência sorteada e os jogos marcados sobrevivem ao reload
+- **Carregamento sob demanda** — o player Lottie entra por `import()` dinâmico, então vira um chunk
+  separado baixado apenas no primeiro sorteio
+
+---
+
+## Rodando localmente
 
 ```bash
 npm install
@@ -78,6 +112,8 @@ npm run dev
 | `npm run check` | formata e corrige com Biome |
 | `npm run history:update` | busca os concursos novos na API da Caixa |
 
+---
+
 ## Histórico
 
 `public/data/history.json` guarda todos os concursos desde o nº 1 (29/09/2003), e a atualização tem
@@ -86,12 +122,13 @@ duas camadas:
 1. **Ao vivo, no navegador.** A API oficial da Caixa responde com CORS liberado, então o app consulta
    o último concurso a cada carregamento. Se houver sorteio novo, ele é anexado na hora (até 12
    concursos de atraso) e a página marca "atualizado agora". Se a API estiver fora, falha em silêncio
-   e o app segue com o JSON — a animação e o backtest não dependem disso.
-2. **Diária, no repositório.** Uma GitHub Action roda `npm run history:update` às 03:00 UTC, commita o
-   JSON e o push redeploya. Isso mantém o arquivo-base em dia, para que o passo 1 quase nunca precise
-   buscar mais de um concurso.
+   e o app segue com o JSON.
+2. **Diária, no repositório.** Uma GitHub Action roda `npm run history:update` às 03:00 UTC, commita
+   o JSON e o push redeploya — mantendo o arquivo-base em dia.
 
 Os sorteios saem por volta das 20h (BRT), de segunda a sábado.
+
+---
 
 ## Créditos
 

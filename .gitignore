@@ -23,3 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# AI reference docs
+plans/
+advisor-plans/
+.claude/
+CLAUDE.md
+docs/superpowers/
+.playwright-mcp/
