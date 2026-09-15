@@ -10,7 +10,7 @@ export function AppLayout() {
         <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-10 sm:px-8 sm:py-14">
           <Outlet />
         </main>
-        <footer className="mx-auto w-full max-w-6xl px-5 py-8 text-xs text-muted-foreground sm:px-8">
+        <footer className="mx-auto w-full max-w-6xl px-5 pt-8 pb-40 text-xs text-muted-foreground sm:px-8 sm:pb-28">
           myLucky · seus números da sorte na Lotofácil · dados oficiais da Caixa
         </footer>
       </div>

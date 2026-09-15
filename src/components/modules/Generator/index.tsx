@@ -1,19 +1,24 @@
 import { Button } from "@elements/Button";
 import { Cost } from "@elements/Cost";
 import { Separator } from "@elements/Separator";
+import { useOnScreen } from "@hooks/OnScreen";
 import { revealDuration, usePrefersReducedMotion } from "@hooks/Reveal";
+import { DrawBar } from "@modules/DrawBar";
 import { Wheels } from "@modules/Wheels";
 import { ArrowDownIcon, ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import { runBacktest } from "@utils/backtest";
 import { cn } from "@utils/css";
 import { type Draw, formatDate, type History, POOL_SIZE } from "@utils/history";
+import { costOf } from "@utils/pricing";
 import { randomSeed } from "@utils/random";
 import { derivePoolBands } from "@utils/stats";
-import { buildWheels } from "@utils/wheel";
+import { buildWheels, resolveActiveSet } from "@utils/wheel";
 import { Backtest } from "@widgets/Backtest";
 import { Guarantee } from "@widgets/Guarantee";
 import { SetPicker } from "@widgets/SetPicker";
 import * as React from "react";
+
+const BACKTEST_OBSERVER: IntersectionObserverInit = { rootMargin: "-10% 0px -45% 0px" };
 
 const COVERAGE = 0.97;
 const MIN_SETS = 1;
@@ -30,6 +35,8 @@ export function Generator({ history, draws }: GeneratorProps) {
   const [copied, setCopied] = React.useState(false);
   const [spinning, setSpinning] = React.useState(false);
   const reducedMotion = usePrefersReducedMotion();
+  const [activeSet, setActiveSet] = React.useState(1);
+  const backtestArea = useOnScreen<HTMLElement>(BACKTEST_OBSERVER);
 
   const bands = React.useMemo(() => derivePoolBands(history.draws, POOL_SIZE, COVERAGE), [history.draws]);
   const previous = history.draws.at(-1);
@@ -37,6 +44,8 @@ export function Generator({ history, draws }: GeneratorProps) {
 
   const wheels = React.useMemo(() => buildWheels(sets, bands, previous, seed), [sets, bands, previous, seed]);
   const backtest = React.useMemo(() => runBacktest(wheels, draws), [wheels, draws]);
+  const currentSet = resolveActiveSet(wheels, activeSet);
+  const currentWheel = wheels.find((wheel) => wheel.set === currentSet);
 
   const draw = React.useCallback(() => {
     setSeed(randomSeed());
@@ -103,7 +112,14 @@ export function Generator({ history, draws }: GeneratorProps) {
 
       <Separator />
 
-      <Wheels wheels={wheels} bands={bands} previous={previous} spinning={spinning} />
+      <Wheels
+        wheels={wheels}
+        bands={bands}
+        previous={previous}
+        spinning={spinning}
+        active={currentSet}
+        onActiveChange={setActiveSet}
+      />
 
       <Separator />
 
@@ -123,6 +139,7 @@ export function Generator({ history, draws }: GeneratorProps) {
       <Separator />
 
       <section
+        ref={backtestArea.ref}
         id="backtest-section"
         className={cn(
           "flex scroll-mt-24 flex-col gap-6 transition-opacity duration-500",
@@ -141,6 +158,15 @@ export function Generator({ history, draws }: GeneratorProps) {
         </div>
         <Backtest result={backtest} />
       </section>
+
+      <DrawBar
+        wheel={currentWheel}
+        totalSets={wheels.length}
+        cost={costOf(wheels.length)}
+        visible={backtestArea.visible}
+        spinning={spinning}
+        onDraw={draw}
+      />
     </div>
   );
 }

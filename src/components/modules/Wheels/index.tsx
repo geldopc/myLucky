@@ -1,20 +1,18 @@
 import type { Bands } from "@utils/stats";
-import { resolveActiveSet, type Wheel as WheelModel } from "@utils/wheel";
+import type { Wheel as WheelModel } from "@utils/wheel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@widgets/Tabs";
 import { Wheel } from "@widgets/Wheel";
-import * as React from "react";
 
 type WheelsProps = {
   wheels: WheelModel[];
   bands: Bands;
   previous?: number[];
   spinning?: boolean;
+  active: number;
+  onActiveChange: (set: number) => void;
 };
 
-export function Wheels({ wheels, bands, previous, spinning = false }: WheelsProps) {
-  const [active, setActive] = React.useState(1);
-  const current = resolveActiveSet(wheels, active);
-
+export function Wheels({ wheels, bands, previous, spinning = false, active, onActiveChange }: WheelsProps) {
   if (wheels.length === 0) return null;
 
   if (wheels.length === 1) {
@@ -24,7 +22,12 @@ export function Wheels({ wheels, bands, previous, spinning = false }: WheelsProp
   }
 
   return (
-    <Tabs id="wheels" value={current} onValueChange={(value) => setActive(Number(value))} className="gap-6">
+    <Tabs
+      id="wheels"
+      value={active}
+      onValueChange={(value) => onActiveChange(Number(value))}
+      className="gap-6"
+    >
       <div className="-mx-1 overflow-x-auto px-1 pb-1">
         <TabsList aria-label="Suas sequências da sorte">
           {wheels.map((wheel) => (
