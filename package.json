@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "^4",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.3.0",
+    "lottie-web": "^5.13.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.3",

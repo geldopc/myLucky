@@ -1,9 +1,11 @@
 import { Button } from "@elements/Button";
 import { Cost } from "@elements/Cost";
 import { Separator } from "@elements/Separator";
+import { revealDuration, usePrefersReducedMotion } from "@hooks/Reveal";
 import { Wheels } from "@modules/Wheels";
 import { ArrowDownIcon, ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import { runBacktest } from "@utils/backtest";
+import { cn } from "@utils/css";
 import { type Draw, formatDate, type History, POOL_SIZE } from "@utils/history";
 import { randomSeed } from "@utils/random";
 import { derivePoolBands } from "@utils/stats";
@@ -26,6 +28,8 @@ export function Generator({ history, draws }: GeneratorProps) {
   const [seed, setSeed] = React.useState(() => randomSeed());
   const [sets, setSets] = React.useState(1);
   const [copied, setCopied] = React.useState(false);
+  const [spinning, setSpinning] = React.useState(false);
+  const reducedMotion = usePrefersReducedMotion();
 
   const bands = React.useMemo(() => derivePoolBands(history.draws, POOL_SIZE, COVERAGE), [history.draws]);
   const previous = history.draws.at(-1);
@@ -33,6 +37,18 @@ export function Generator({ history, draws }: GeneratorProps) {
 
   const wheels = React.useMemo(() => buildWheels(sets, bands, previous, seed), [sets, bands, previous, seed]);
   const backtest = React.useMemo(() => runBacktest(wheels, draws), [wheels, draws]);
+
+  const draw = React.useCallback(() => {
+    setSeed(randomSeed());
+    if (reducedMotion) return;
+    setSpinning(true);
+  }, [reducedMotion]);
+
+  React.useEffect(() => {
+    if (!spinning) return;
+    const id = window.setTimeout(() => setSpinning(false), revealDuration(POOL_SIZE));
+    return () => window.clearTimeout(id);
+  }, [spinning]);
 
   const copyGames = React.useCallback(() => {
     const text = wheels
@@ -62,13 +78,13 @@ export function Generator({ history, draws }: GeneratorProps) {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <SetPicker value={sets} min={MIN_SETS} max={MAX_SETS} onChange={setSets} />
           <div className="flex gap-2">
-            <Button id="copy-games" variant="outline" onClick={copyGames}>
+            <Button id="copy-games" variant="outline" onClick={copyGames} disabled={spinning}>
               {copied ? <CheckIcon weight="regular" /> : <CopyIcon weight="regular" />}
               {copied ? "Copiado" : "Copiar meus jogos"}
             </Button>
-            <Button id="generate" onClick={() => setSeed(randomSeed())}>
-              <ArrowsClockwiseIcon weight="regular" />
-              Tentar outros números
+            <Button id="generate" onClick={draw} disabled={spinning} aria-busy={spinning}>
+              <ArrowsClockwiseIcon weight="regular" className={cn(spinning && "animate-spin")} />
+              {spinning ? "Sorteando…" : "Tentar outros números"}
             </Button>
           </div>
         </div>
@@ -87,7 +103,7 @@ export function Generator({ history, draws }: GeneratorProps) {
 
       <Separator />
 
-      <Wheels wheels={wheels} bands={bands} previous={previous} />
+      <Wheels wheels={wheels} bands={bands} previous={previous} spinning={spinning} />
 
       <Separator />
 
@@ -106,7 +122,13 @@ export function Generator({ history, draws }: GeneratorProps) {
 
       <Separator />
 
-      <section id="backtest-section" className="flex scroll-mt-24 flex-col gap-6">
+      <section
+        id="backtest-section"
+        className={cn(
+          "flex scroll-mt-24 flex-col gap-6 transition-opacity duration-500",
+          spinning && "opacity-25"
+        )}
+      >
         <div className="flex flex-col gap-2">
           <h2 className="font-heading text-sm tracking-wide text-muted-foreground uppercase">
             Quanto estes números já teriam pago

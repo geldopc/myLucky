@@ -8,16 +8,19 @@ type WheelsProps = {
   wheels: WheelModel[];
   bands: Bands;
   previous?: number[];
+  spinning?: boolean;
 };
 
-export function Wheels({ wheels, bands, previous }: WheelsProps) {
+export function Wheels({ wheels, bands, previous, spinning = false }: WheelsProps) {
   const [active, setActive] = React.useState(1);
   const current = resolveActiveSet(wheels, active);
 
   if (wheels.length === 0) return null;
 
   if (wheels.length === 1) {
-    return <Wheel wheel={wheels[0]} bands={bands} previous={previous} showLabel={false} />;
+    return (
+      <Wheel wheel={wheels[0]} bands={bands} previous={previous} showLabel={false} spinning={spinning} />
+    );
   }
 
   return (
@@ -34,7 +37,7 @@ export function Wheels({ wheels, bands, previous }: WheelsProps) {
 
       {wheels.map((wheel) => (
         <TabsContent key={wheel.set} value={wheel.set}>
-          <Wheel wheel={wheel} bands={bands} previous={previous} showLabel={false} />
+          <Wheel wheel={wheel} bands={bands} previous={previous} showLabel={false} spinning={spinning} />
         </TabsContent>
       ))}
     </Tabs>

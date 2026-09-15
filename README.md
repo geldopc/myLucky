@@ -43,6 +43,9 @@ margem da loteria e nenhum sistema a contorna.
 - **Custo em destaque** — total a apostar sempre visível, calculado sobre o preço real da aposta.
 - **Comparação com o sorteio** — passe o mouse ou toque em qualquer resultado do backtest para ver as
   15 dezenas sorteadas com os seus acertos destacados.
+- **Sorteio animado** — gerar é instantâneo, mas as 14 dezenas giram e travam uma a uma, ao lado de uma
+  animação Lottie. O player entra por `import()` dinâmico, então vira um chunk separado (47 KB gzip) que
+  só é baixado no primeiro sorteio; o bundle inicial não muda. Respeita `prefers-reduced-motion`.
 
 ## Stack
 

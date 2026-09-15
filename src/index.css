@@ -133,3 +133,25 @@
 html {
   scroll-behavior: smooth;
 }
+
+@keyframes ball-settle {
+  0% {
+    transform: scale(1.35);
+  }
+  55% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-ball-settle {
+  animation: ball-settle 320ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ball-settle {
+    animation: none;
+  }
+}
