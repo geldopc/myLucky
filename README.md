@@ -38,6 +38,8 @@ margem da loteria e nenhum sistema a contorna.
 
 - **N conjuntos sem repetição** — escolha de 1 a 10 conjuntos (11 a 110 jogos); nenhum jogo se repete
   entre conjuntos, garantido por teste automatizado.
+- **Conjuntos em abas** — com mais de um conjunto os jogos vão para abas, então apenas 11 jogos ficam
+  montados no DOM por vez em vez de até 110.
 - **Custo em destaque** — total a apostar sempre visível, calculado sobre o preço real da aposta.
 - **Comparação com o sorteio** — passe o mouse ou toque em qualquer resultado do backtest para ver as
   15 dezenas sorteadas com os seus acertos destacados.

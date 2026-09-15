@@ -5,7 +5,7 @@ import { DRAW_SIZE, type History, POOL_SIZE, toDraws } from "@utils/history";
 import { costOf, GAMES_PER_SET, TICKET_PRICE } from "@utils/pricing";
 import { createRng, sample } from "@utils/random";
 import { computeFeatures, derivePoolBands, withinBands } from "@utils/stats";
-import { buildWheel, buildWheels, gameKey, guaranteeTable, scoreWheel } from "@utils/wheel";
+import { buildWheel, buildWheels, gameKey, guaranteeTable, resolveActiveSet, scoreWheel } from "@utils/wheel";
 import { describe, expect, it } from "vitest";
 
 const history: History = JSON.parse(readFileSync("public/data/history.json", "utf8"));
@@ -137,5 +137,23 @@ describe("generatePool", () => {
 
   it("e deterministico para a mesma seed", () => {
     expect(generatePool(bands, previous, 42).pool).toEqual(generatePool(bands, previous, 42).pool);
+  });
+});
+
+describe("resolveActiveSet", () => {
+  const wheels = buildWheels(3, bands, previous, 5);
+
+  it("mantem o conjunto ativo quando ele ainda existe", () => {
+    expect(resolveActiveSet(wheels, 2)).toBe(2);
+    expect(resolveActiveSet(wheels, 3)).toBe(3);
+  });
+
+  it("volta para o primeiro quando o conjunto ativo deixou de existir", () => {
+    expect(resolveActiveSet(wheels, 10)).toBe(1);
+    expect(resolveActiveSet(wheels.slice(0, 1), 3)).toBe(1);
+  });
+
+  it("nao quebra com lista vazia", () => {
+    expect(resolveActiveSet([], 7)).toBe(1);
   });
 });

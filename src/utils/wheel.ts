@@ -93,3 +93,7 @@ export function scoreWheel(wheel: Wheel, drawn: number[]): { points: number; gam
 export function poolPassesBands(pool: number[], bands: Bands, previous?: number[]): boolean {
   return withinBands(computeFeatures(pool, previous), bands);
 }
+
+export function resolveActiveSet(wheels: Wheel[], active: number): number {
+  return wheels.some((wheel) => wheel.set === active) ? active : (wheels[0]?.set ?? 1);
+}

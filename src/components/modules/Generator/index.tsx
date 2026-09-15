@@ -1,6 +1,7 @@
 import { Button } from "@elements/Button";
 import { Cost } from "@elements/Cost";
 import { Separator } from "@elements/Separator";
+import { Wheels } from "@modules/Wheels";
 import { ArrowDownIcon, ArrowsClockwiseIcon, CheckIcon, CopyIcon } from "@phosphor-icons/react";
 import { runBacktest } from "@utils/backtest";
 import { type Draw, formatDate, type History, POOL_SIZE } from "@utils/history";
@@ -10,7 +11,6 @@ import { buildWheels } from "@utils/wheel";
 import { Backtest } from "@widgets/Backtest";
 import { Guarantee } from "@widgets/Guarantee";
 import { SetPicker } from "@widgets/SetPicker";
-import { Wheel } from "@widgets/Wheel";
 import * as React from "react";
 
 const COVERAGE = 0.97;
@@ -87,17 +87,7 @@ export function Generator({ history, draws }: GeneratorProps) {
 
       <Separator />
 
-      <div className="flex flex-col gap-10">
-        {wheels.map((wheel) => (
-          <Wheel
-            key={wheel.set}
-            wheel={wheel}
-            bands={bands}
-            previous={previous}
-            showLabel={wheels.length > 1}
-          />
-        ))}
-      </div>
+      <Wheels wheels={wheels} bands={bands} previous={previous} />
 
       <Separator />
 
