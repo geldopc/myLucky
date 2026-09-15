@@ -75,7 +75,7 @@ nenhum sistema a contorna.
 | Tabela | TanStack Table v8 |
 | Rotas | React Router v7 |
 | Animação | Lottie (chunk sob demanda) + canvas |
-| Fontes | Oxanium (títulos) + Raleway (texto) |
+| Fontes | Raleway (títulos, `--font-heading`) + Oxanium (texto, `--font-sans`) |
 | Lint/Format | Biome |
 | Testes | Vitest |
 | Deploy | Vercel + GitHub Actions |
@@ -93,6 +93,34 @@ nenhum sistema a contorna.
 - **Estado em `localStorage`** — a sequência sorteada e os jogos marcados sobrevivem ao reload
 - **Carregamento sob demanda** — o player Lottie entra por `import()` dinâmico, então vira um chunk
   separado baixado apenas no primeiro sorteio
+
+---
+
+## Identidade visual
+
+A marca é um lockup de símbolo + wordmark, sem nenhuma dependência ou token de cor novo — tudo sai do
+que `src/index.css` já define.
+
+**O símbolo** é a própria cartela: uma grade 5×3 de círculos em `viewBox="0 0 60 34"` (raio 4, passo
+13, primeiro centro em 4,4). Dez pontos cheios representam as 14 dezenas fixas e cinco pontos claros
+as 11 de fora — a mesma ideia de cobertura que o app executa. Os cheios usam `currentColor`, então
+herdam `text-foreground` e funcionam em light e dark sem regra extra; os claros usam
+`fill-muted-foreground/45`.
+
+**O wordmark** repete esse contraste na tipografia: `my` em Raleway 200 (`font-extralight`) e `Lucky`
+em Raleway 600 (`font-semibold`), a 18px com `tracking-tight`. O descritor "Lotofácil" some abaixo do
+breakpoint `sm`.
+
+**O favicon** é o recorte 3×3 central da cartela sobre placa `oklch(0.141 0.005 285.823)`:
+
+| Arquivo | Uso |
+| --- | --- |
+| `public/favicon.svg` | principal, círculos em viewBox 64 (raio de placa 12) |
+| `public/favicon-16.svg` | 16px, com os círculos virando quadrados de 2px para sobreviver ao hinting |
+| `public/apple-touch-icon.png` | 180px, para iOS |
+
+O componente vive em [`src/components/elements/Logomark/index.tsx`](src/components/elements/Logomark/index.tsx)
+e é stateless.
 
 ---
 
