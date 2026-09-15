@@ -47,6 +47,10 @@ margem da loteria e nenhum sistema a contorna.
   progresso na aba ("Sorte 2 · 8/11") e um aviso quando a sequência inteira estiver feita. A sequência
   gerada e as marcações ficam no `localStorage`, então recarregar a página não perde nada — feito para
   conferir no computador enquanto se aposta pelo celular.
+- **Todas as premiações** — o backtest lista todos os concursos que teriam pago (não uma amostra),
+  começando por 8 e expandindo em lotes de 50.
+- **Borda elétrica no hover** — passar o mouse num jogo acende uma borda animada, para não se perder
+  entre os 11. Só o card sob o cursor monta o canvas, então há no máximo uma animação por vez.
 - **Sorteio animado** — gerar é instantâneo, mas as 14 dezenas giram e travam uma a uma, ao lado de uma
   animação Lottie. O player entra por `import()` dinâmico, então vira um chunk separado (47 KB gzip) que
   só é baixado no primeiro sorteio; o bundle inicial não muda. Respeita `prefers-reduced-motion`.
@@ -85,3 +89,10 @@ duas camadas:
    buscar mais de um concurso.
 
 Os sorteios saem por volta das 20h (BRT), de segunda a sábado.
+
+## Créditos
+
+O efeito de borda animada é adaptado do [ElectricBorder](https://reactbits.dev) do React Bits —
+Copyright (c) 2026 David Haz, sob MIT + Commons Clause License Condition v1.0. Foi modificado para
+usar exportação nomeada, herdar a cor do tema, animar apenas o cartão sob o cursor e respeitar
+`prefers-reduced-motion`.

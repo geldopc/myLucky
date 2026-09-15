@@ -24,7 +24,7 @@ export type Backtest = {
 
 const PRIZE_FLOOR = 11;
 
-export function runBacktest(wheels: Wheel[], draws: Draw[], topSize = 8): Backtest {
+export function runBacktest(wheels: Wheel[], draws: Draw[]): Backtest {
   const prepared = wheels.map((wheel) => ({
     wheel,
     poolSet: new Set(wheel.pool),
@@ -74,7 +74,8 @@ export function runBacktest(wheels: Wheel[], draws: Draw[], topSize = 8): Backte
       .map(([points, games]) => ({ points, games }))
       .sort((a, b) => b.points - a.points);
 
-    if (best >= PRIZE_FLOOR) prizeContests++;
+    if (best < PRIZE_FLOOR) continue;
+    prizeContests++;
     hits.push({
       contest: draw.contest,
       date: draw.date,
@@ -94,6 +95,6 @@ export function runBacktest(wheels: Wheel[], draws: Draw[], topSize = 8): Backte
     distribution,
     prizeContests,
     fixedPrizeTotal,
-    best: hits.slice(0, topSize),
+    best: hits,
   };
 }

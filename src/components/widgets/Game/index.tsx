@@ -1,7 +1,9 @@
 import { Ball } from "@elements/Ball";
+import { ElectricBorder } from "@elements/ElectricBorder";
 import { CheckCircleIcon, CircleDashedIcon } from "@phosphor-icons/react";
 import { cn } from "@utils/css";
 import type { Game as GameModel } from "@utils/wheel";
+import * as React from "react";
 
 type GameProps = {
   game: GameModel;
@@ -10,6 +12,8 @@ type GameProps = {
 };
 
 export function Game({ game, played, onToggle }: GameProps) {
+  const [focused, setFocused] = React.useState(false);
+
   return (
     <li>
       <button
@@ -18,15 +22,20 @@ export function Game({ game, played, onToggle }: GameProps) {
         aria-pressed={played}
         aria-label={`Jogo ${game.index}${played ? ", já jogado" : ", marcar como jogado"}`}
         onClick={onToggle}
+        onMouseEnter={() => setFocused(true)}
+        onMouseLeave={() => setFocused(false)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         className={cn(
-          "group flex w-full flex-col gap-3 rounded-3xl p-4 text-left ring-1 transition-all",
-          "hover:ring-2 hover:ring-foreground focus-visible:ring-2 focus-visible:ring-foreground focus-visible:outline-none",
+          "group relative flex w-full flex-col gap-3 rounded-3xl p-4 text-left ring-1 transition-all focus-visible:outline-none",
           played
             ? "bg-muted ring-transparent"
-            : "bg-card ring-foreground/5 hover:-translate-y-0.5 hover:shadow-md dark:ring-foreground/10"
+            : "bg-card ring-foreground/5 hover:-translate-y-0.5 hover:shadow-lg dark:ring-foreground/10"
         )}
       >
-        <span className="flex items-center justify-between gap-2">
+        <ElectricBorder active={focused && !played} borderRadius={24} />
+
+        <span className="relative z-20 flex items-center justify-between gap-2">
           <span className="flex items-center gap-2">
             {played ? (
               <CheckCircleIcon weight="fill" className="size-4" />
@@ -48,7 +57,9 @@ export function Game({ game, played, onToggle }: GameProps) {
           </span>
         </span>
 
-        <span className={cn("flex flex-wrap gap-1.5 transition-opacity", played && "opacity-40")}>
+        <span
+          className={cn("relative z-20 flex flex-wrap gap-1.5 transition-opacity", played && "opacity-40")}
+        >
           {game.numbers.map((value) => (
             <Ball key={value} value={value} size="sm" tone={value === game.extra ? "extra" : "pool"} />
           ))}
