@@ -1,16 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="myLucky">
-  <rect width="64" height="64" rx="12" fill="#09090b"/>
-  <g fill="#fafafa">
-    <circle cx="32" cy="16" r="5"/>
-    <circle cx="48" cy="16" r="5"/>
-    <circle cx="16" cy="32" r="5"/>
-    <circle cx="48" cy="32" r="5"/>
-    <circle cx="16" cy="48" r="5"/>
-    <circle cx="32" cy="48" r="5"/>
-    <circle cx="48" cy="48" r="5"/>
+  <style>
+    .on { fill: #09090b }
+    .off { fill: #09090b; opacity: .3 }
+    @media (prefers-color-scheme: dark) {
+      .on { fill: #fafafa }
+      .off { fill: #fafafa; opacity: .3 }
+    }
+  </style>
+  <g class="on">
+    <circle cx="32" cy="11" r="9"/>
+    <circle cx="53" cy="11" r="9"/>
+    <circle cx="11" cy="32" r="9"/>
+    <circle cx="53" cy="32" r="9"/>
+    <circle cx="11" cy="53" r="9"/>
+    <circle cx="32" cy="53" r="9"/>
+    <circle cx="53" cy="53" r="9"/>
   </g>
-  <g fill="#a1a1aa" fill-opacity="0.45">
-    <circle cx="16" cy="16" r="5"/>
-    <circle cx="32" cy="32" r="5"/>
+  <g class="off">
+    <circle cx="11" cy="11" r="9"/>
+    <circle cx="32" cy="32" r="9"/>
   </g>
 </svg>

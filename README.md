@@ -111,13 +111,15 @@ herdam `text-foreground` e funcionam em light e dark sem regra extra; os claros 
 em Raleway 600 (`font-semibold`), a 18px com `tracking-tight`. O descritor "Lotofácil" some abaixo do
 breakpoint `sm`.
 
-**O favicon** é o recorte 3×3 central da cartela sobre placa `oklch(0.141 0.005 285.823)`:
+**O favicon** é o recorte 3×3 central da cartela, sem placa de fundo: os pontos são transparentes ao
+redor e trocam de cor conforme o tema do navegador via `prefers-color-scheme`, então o ícone aparece
+escuro na aba clara e claro na aba escura, sem moldura aparecendo atrás.
 
 | Arquivo | Uso |
 | --- | --- |
-| `public/favicon.svg` | principal, círculos em viewBox 64 (raio de placa 12) |
-| `public/favicon-16.svg` | 16px, com os círculos virando quadrados de 2px para sobreviver ao hinting |
-| `public/apple-touch-icon.png` | 180px, para iOS |
+| `public/favicon.svg` | principal, círculos em viewBox 64, fundo transparente |
+| `public/favicon-16.svg` | 16px, com os círculos virando quadrados para sobreviver ao hinting |
+| `public/apple-touch-icon.png` | 180px, quadrado cheio sobre `#09090b` — o iOS aplica a própria máscara de cantos, então o arquivo não leva raio nem transparência |
 
 O componente vive em [`src/components/elements/Logomark/index.tsx`](src/components/elements/Logomark/index.tsx)
 e é stateless.
